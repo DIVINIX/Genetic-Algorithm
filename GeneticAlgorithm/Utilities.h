@@ -17,11 +17,10 @@
 #define FITING_RATE 15
 
 /*
-* Fonction d.
+* Fonction de calcul de la distance entre deux villes.
 *
-* Cette fonction permet d'évaluer une population. C'est à dire qu'à partir d'une population
-* donnée, la fonction retourne une nouvelle population seletionnée à partir de la population
-* d'origine. Cette nouvelle population sera ensuite utilisée pour l'évolution.
+* Cette fonction permet de calculer la distance entre deux gènes, c'est à dire entre deux villes.
+* Ce calcul est effectué par rapport aux coordonnées GPS des villes.
 */
 double DistanceCalculation(Gene *gene1, Gene *gene2)
 {
@@ -39,11 +38,10 @@ double DistanceCalculation(Gene *gene1, Gene *gene2)
 }
 
 /*
-* Fonction d'évaluation.
+* Fonction de calcul de la distance d'un chromosome.
 *
-* Cette fonction permet d'évaluer une population. C'est à dire qu'à partir d'une population
-* donnée, la fonction retourne une nouvelle population seletionnée à partir de la population
-* d'origine. Cette nouvelle population sera ensuite utilisée pour l'évolution.
+* Cette fonction permet de calculer la distance total d'un chromosome, c'est à dire d'un chemin. 
+* On additione la distance entre toutes les villes du chemin.
 */
 void ChromosomeDistanceCalculation(Chromosome *chromosome)
 {
@@ -57,11 +55,9 @@ void ChromosomeDistanceCalculation(Chromosome *chromosome)
 }
 
 /*
-* Fonction d'évaluation.
+* Fonction pour récupérer le meilleur chromosome.
 *
-* Cette fonction permet d'évaluer une population. C'est à dire qu'à partir d'une population
-* donnée, la fonction retourne une nouvelle population seletionnée à partir de la population
-* d'origine. Cette nouvelle population sera ensuite utilisée pour l'évolution.
+* Cette fonction permet de trouver le meilleur chemin, c'est à dire le chemin le plus court.
 */
 double GetBestValue(std::vector<Chromosome *> Population)
 {
@@ -77,11 +73,9 @@ double GetBestValue(std::vector<Chromosome *> Population)
 }
 
 /*
-* Fonction d'évaluation.
+* Fonction de remplissage.
 *
-* Cette fonction permet d'évaluer une population. C'est à dire qu'à partir d'une population
-* donnée, la fonction retourne une nouvelle population seletionnée à partir de la population
-* d'origine. Cette nouvelle population sera ensuite utilisée pour l'évolution.
+* Cette fonction permet de remplir un vector de City à partir d'un autre vector de City.
 */
 std::vector<City> FillCityList(std::vector<City> cities)
 {
@@ -92,11 +86,13 @@ std::vector<City> FillCityList(std::vector<City> cities)
 }
 
 /*
-* Fonction d'évaluation.
+* Fonction de génération de la population.
 *
-* Cette fonction permet d'évaluer une population. C'est à dire qu'à partir d'une population
-* donnée, la fonction retourne une nouvelle population seletionnée à partir de la population
-* d'origine. Cette nouvelle population sera ensuite utilisée pour l'évolution.
+* Cette fonction permet de générer une population aléatoire d'une taille donnée.
+* Une population est composée de chromosomes et chaque chromosome est composé d'une liste de villes, les gènes. 
+* Pour créer un chromosome on commence par faire un tableau qui contient la liste de toutes les villes. 
+* Ensuite on sort une ville de ce tableau pour l'ajoter au chromosome. On continue jusqu'à ce qu'il n'y ai plus de villes dans le tableau. 
+* On recommence l'opération de création d'un chromosome jusqu'à atteindre la taille de la population désirée.
 */
 std::vector<Chromosome*> GeneratePopulation(std::vector<City> cities)
 {
@@ -159,9 +155,8 @@ std::vector<Chromosome *> Fitting(std::vector<Chromosome*> Population)
 /*
 * Fonction de mutation.
 *
-* Cette fonction permet d'évaluer une population. C'est à dire qu'à partir d'une population
-* donnée, la fonction retourne une nouvelle population seletionnée à partir de la population
-* d'origine. Cette nouvelle population sera ensuite utilisée pour l'évolution.
+* Cette fonction permet d'effectuer une mutation sur un chromosome.
+* On prend un chromosome de départ et on intervertit deux gènes.
 */
 void Mutation(Chromosome *chromosome)
 {
@@ -189,6 +184,12 @@ void Mutation(Chromosome *chromosome)
 	chromosome = my_chromosome;
 }
 
+/*
+* Fonction de test pour savoir si un gène existe.
+*
+* Cette fonction permet de tester la présence ou non d'un gène dans un chromosome. 
+* Cette fonction sert essentiellement pour le croisement.
+*/
 bool CheckGenePresent(Chromosome *chromosome, Gene *gene)
 {
 	bool present = false;
@@ -197,7 +198,7 @@ bool CheckGenePresent(Chromosome *chromosome, Gene *gene)
 	{
 		int id_2 = gene->GetGene().GetId();
 		int id_1 = g->GetGene().GetId();
-		
+
 		if (id_1 == id_2)
 			return true;
 	}
@@ -208,9 +209,10 @@ bool CheckGenePresent(Chromosome *chromosome, Gene *gene)
 /*
 * Fonction de croisement.
 *
-* Cette fonction permet d'évaluer une population. C'est à dire qu'à partir d'une population
-* donnée, la fonction retourne une nouvelle population seletionnée à partir de la population
-* d'origine. Cette nouvelle population sera ensuite utilisée pour l'évolution.
+* Cette fonction permet de croiser deux chromosomes. C'est à dire de créer un chromosome enfant à partir de deux chromosomes parents.
+* Le croisement fonctionne de la facon suivante. On prend le premier gène des deux parents.
+* Si les gènes sont différents et qu'ils ne sont pas déjà présent dans le chromosome enfant alors on les ajoute à l'enfant.
+* Si les gènes sont identiques et que ce gène n'est pas présent dans l'enfant on l'ajoute. On recommence pour tous les gènes des parents.
 */
 Chromosome* Crossing(Chromosome *parent1, Chromosome *parent2)
 {
@@ -240,17 +242,17 @@ Chromosome* Crossing(Chromosome *parent1, Chromosome *parent2)
 /*
 * Fonction d'évolution.
 *
-* Cette fonction permet d'évaluer une population. C'est à dire qu'à partir d'une population
-* donnée, la fonction retourne une nouvelle population seletionnée à partir de la population
-* d'origine. Cette nouvelle population sera ensuite utilisée pour l'évolution.
+* Cette fonction permet d'évoluer une population. C'est à dire qu'à partir d'une population on en créer une nouvelle.
+* Cette nouvelle population contient la population source et tous les enfants créés suite aux croisements.
 */
 std::vector<Chromosome *> Evolution(std::vector<Chromosome*> Population)
 {
 	std::vector<Chromosome *> NextGeneration;
 
-	// On sauvegarde les parents
-	for (auto c : Population)
-		NextGeneration.push_back(c);
+	// On sauvegarde les parents, on ne garde que les meilleurs pour ne pas avoir une population trop importante
+	std::vector<Chromosome *> BestParents = Fitting(Population);
+	for (auto c : BestParents)
+	NextGeneration.push_back(c);
 
 	while (NextGeneration.size() < POPULATION_SIZE + Population.size())
 	{
@@ -261,8 +263,10 @@ std::vector<Chromosome *> Evolution(std::vector<Chromosome*> Population)
 		{
 			NextGeneration.push_back(Crossing(Population[index_parent_1], Population[index_parent_2]));
 
+			// Le pourcentage d'évolution
 			const int mutation_percentage{ rand() % 100 };
 
+			// Ici on a un pourcentage d'évolution de 1%
 			if (mutation_percentage == 1)
 				Mutation(NextGeneration.back());
 		}
