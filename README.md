@@ -24,5 +24,7 @@ Pour fonctionner, un algorithme génétique doit disposer d'une population de d�
 * Fonction de croisement : Cette fonction permet de croiser deux chromosomes, c’est-à-dire de créer un chromosome enfant à partir de deux chromosomes parents.
 * Fonction d'évolution : Cette fonction permet d'évoluer une population, c’est-à-dire qu'à partir d'une population on en créer une nouvelle. Cette nouvelle population contient la population source et tous les enfants créés suite à la fonction de croisement.
 
-### Environnement : C++, Visual Studio
+## Environnement :
+
+C++, Visual Studio
 
